@@ -426,46 +426,34 @@ class DocumentService implements IDocumentService {
   async verifyDocument(id: string): Promise<VerifyDocumentResponse> {
     try {
       console.log(`🔐 DocumentService - Verificando documento: ${id}`)
+      const response = await apiClient.post(`${this.baseEndpoint}/${id}/verify`)
       
-      // Usar fetch directo para evitar problemas con headers en peticiones POST sin cuerpo
-      const fullUrl = `${API_CONFIG.backend.baseUrl}${this.baseEndpoint}/${id}/verify`
-      console.log(`🔐 DocumentService - URL completa: ${fullUrl}`)
-      
-      const response = await fetch(fullUrl, {
-        method: 'POST',
-        credentials: 'include', // 🔑 CLAVE: Envía cookies HttpOnly automáticamente
-        headers: {
-          'Accept': 'application/json',
-          // No incluir Content-Type para peticiones POST sin cuerpo
-        }
-      })
-
-      console.log(`🔐 DocumentService - Response status: ${response.status}`)
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error(`🚨 DocumentService - Error ${response.status}:`, errorText)
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
-
-      const result = await response.json()
-      console.log(`✅ DocumentService - Verificación exitosa:`, result)
-      
-      return {
-        success: true,
-        data: {
-          documentId: result.documentId || id,
-          isValid: result.isValid || result.success || false,
-          message: result.message || 'Verificación completada'
+      if (response.success && response.data) {
+        return {
+          success: true,
+          data: {
+            documentId: response.data.documentId,
+            isValid: response.data.isValid,
+            message: response.data.message
+          }
         }
       }
       
-    } catch (error: any) {
-      console.error('💥 Error verifying document:', error)
       return {
         success: false,
         data: {
-            documentId: id,
+            documentId: 'desconocido',
+            isValid: false,
+            message: 'error'
+        },
+        error: response.error || 'Error al verificar documento'
+      }
+    } catch (error: any) {
+      console.error('Error verifying document:', error)
+      return {
+        success: false,
+        data: {
+            documentId: 'desconocido',
             isValid: false,
             message: error.message || 'Error en la verificación'
         },
