@@ -103,7 +103,15 @@ class ApiClient {
 
     try {
       // Si el endpoint ya es una URL completa, usarla directamente
-      const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`
+      // Si no, construir la URL correctamente evitando dobles slashes
+      let url: string
+      if (endpoint.startsWith('http')) {
+        url = endpoint
+      } else {
+        const baseUrl = this.baseUrl.replace(/\/$/, '') // Remover slash al final
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}` // Asegurar slash al inicio
+        url = `${baseUrl}${cleanEndpoint}`
+      }
       
       // Headers base
       const requestHeaders: Record<string, string> = {

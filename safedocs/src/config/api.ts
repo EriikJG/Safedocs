@@ -29,7 +29,9 @@ export const API_CONFIG = {
 
 // Helper para construir URLs del backend
 export const buildApiUrl = (endpoint: string) => {
-  return `${API_CONFIG.backend.baseUrl}${endpoint}`
+  const baseUrl = API_CONFIG.backend.baseUrl.replace(/\/$/, '') // Remover slash al final
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}` // Asegurar slash al inicio
+  return `${baseUrl}${cleanEndpoint}`
 }
 
 // Helper para obtener headers con autenticación
