@@ -322,3 +322,15 @@
 //     </>
 //   );
 // }
+
+// Componente temporal para que el build funcione
+export default function SharePage() {
+  return (
+    <div className="p-8 text-center">
+      <h1 className="text-xl font-semibold mb-2">Página en Desarrollo</h1>
+      <p className="text-muted-foreground">
+        Esta funcionalidad está siendo desarrollada.
+      </p>
+    </div>
+  );
+}

@@ -181,11 +181,11 @@ export default function SharedDocumentPage() {
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div className="text-4xl">
-                    {getFileIcon(sharedDoc.document.tipo)}
+                    {getFileIcon(sharedDoc.document.doc_type)}
                   </div>
                   <div>
                     <CardTitle className="text-xl">
-                      {sharedDoc.document.titulo}
+                      {sharedDoc.document.title}
                     </CardTitle>
                     <CardDescription className="mt-1">
                       {sharedDoc.share.title || "Documento compartido"}
@@ -220,10 +220,10 @@ export default function SharedDocumentPage() {
               )}
 
               {/* Descripción del documento */}
-              {sharedDoc.document.contenido && (
+              {sharedDoc.document.description && (
                 <div className="mb-4">
                   <h4 className="font-medium text-gray-900 mb-2">Descripción</h4>
-                  <p className="text-gray-600">{sharedDoc.document.contenido}</p>
+                  <p className="text-gray-600">{sharedDoc.document.description}</p>
                 </div>
               )}
 
@@ -232,7 +232,7 @@ export default function SharedDocumentPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-gray-500">
                     <FileText className="h-4 w-4" />
-                    <span>Tipo: {sharedDoc.document.tipo}</span>
+                    <span>Tipo: {sharedDoc.document.doc_type}</span>
                   </div>
                   {sharedDoc.document.file_size && (
                     <div className="flex items-center gap-2 text-gray-500">

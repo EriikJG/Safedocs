@@ -16,6 +16,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { PasswordStrengthIndicator } from './password-strength-indicator';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { EmailVerificationDialog } from './email-verification-dialog';
+import { useEmailVerification } from '@/contexts/EmailVerificationContext';
 
 const formSchema = z
   .object({
@@ -40,6 +42,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { show, email, setState } = useEmailVerification();
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,19 +63,16 @@ export function RegisterForm() {
     setIsSubmitting(true);
     try {
       const fullName = `${data.names} ${data.last_names}`;
-      const result = await signUpWithEmail(data.email, data.password, fullName);
+      const result = await signUpWithEmail(data.email, data.password, fullName,'');
+      console.log('🔐 Registro exitoso:', result);
       
-      // Check if the user needs to verify their email
-      if (result?.user?.confirmation_sent_at) {
-        toast.success('Te hemos enviado un correo de confirmación. Por favor verifica tu cuenta.');
-      } else {
-        toast.success('Cuenta creada exitosamente.');
-      }
+      // Siempre mostrar el diálogo de verificación después del registro
+      console.log('🔐 Registro exitoso, mostrando diálogo de verificación');
+      setState({ show: true, email: data.email });
+      toast.success('Te hemos enviado un correo de confirmación. Por favor verifica tu cuenta.');
       
-      // Short delay before redirecting
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+      // No redirigir automáticamente, dejar que el usuario cierre el diálogo
+      // La redirección se hará en el onClose del diálogo
     } catch (error: any) {
       if (error.message.includes('ya está registrado')) {
         toast.error(error.message);
@@ -253,6 +253,12 @@ export function RegisterForm() {
           </>
         </Button>
       </div>
+
+      <EmailVerificationDialog
+        isOpen={show}
+        onClose={() => setState((prev) => ({ ...prev, show: false }))}
+        email={email}
+      />
     </div>
   );
 }

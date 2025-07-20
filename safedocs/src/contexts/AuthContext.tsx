@@ -175,15 +175,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const user = response.user;
       
       if (user) {
-        setUser(user);
-        
-        // Con cookies HttpOnly, la sesión se maneja automáticamente
-        const fakeSession = {
-          access_token: 'managed_by_cookies',
-          refresh_token: 'managed_by_cookies',
-          expires_at: undefined
-        };
-        setSession(fakeSession);
+        // Solo establecer la sesión si el email está confirmado
+        if (user.email_confirmed) {
+          setUser(user);
+          
+          // Con cookies HttpOnly, la sesión se maneja automáticamente
+          const fakeSession = {
+            access_token: 'managed_by_cookies',
+            refresh_token: 'managed_by_cookies',
+            expires_at: undefined
+          };
+          setSession(fakeSession);
+        } else {
+          // Si el email no está confirmado, no establecer la sesión
+          setUser(null);
+          setSession(null);
+        }
       }
       
       return { user: user || null };

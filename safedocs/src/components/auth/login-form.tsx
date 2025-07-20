@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { Icons } from "@/components/ui/icons";
 import Link from "next/link";
+import { useEmailVerification } from '@/contexts/EmailVerificationContext';
+import { EmailVerificationDialog } from './email-verification-dialog';
 
 const formSchema = z.object({
   email: z.string().email('Ingresa un correo electrónico válido'),
@@ -23,6 +25,8 @@ export function LoginForm() {
   const { signInWithGoogle, signInWithEmail } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
   const router = useRouter();
+
+  const { show, email, setState } = useEmailVerification();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,38 +52,16 @@ export function LoginForm() {
       router.push('/overview');
     } catch (error: any) {
       console.error('🔐 LoginForm - Error al iniciar sesión:', error);
-      
-      // Mejorar el manejo de errores específicos
-      let errorMessage = 'Error al iniciar sesión';
-      
-      if (error.message) {
-        const message = error.message.toLowerCase();
-        console.log('🔐 LoginForm - Mensaje de error recibido:', message);
-        
-        if (message.includes('email o contraseña incorrectos') || 
-            message.includes('invalid login credentials') || 
-            message.includes('credenciales inválidas') ||
-            message.includes('credenciales incorrectas')) {
-          errorMessage = 'Email o contraseña incorrectos. Verifica tus credenciales.';
-        } else if (message.includes('email not confirmed') || 
-                   message.includes('confirma tu email')) {
-          errorMessage = 'Por favor confirma tu email antes de iniciar sesión.';
-        } else if (message.includes('timeout') || 
-                   message.includes('tiempo de espera')) {
-          errorMessage = 'Tiempo de espera agotado. Verifica tu conexión a internet.';
-        } else if (message.includes('connection') || 
-                   message.includes('conexión')) {
-          errorMessage = 'No se pudo conectar con el servidor. Intenta más tarde.';
-        } else {
-          errorMessage = error.message;
-        }
+      if (error.message.includes('confirma tu email')) {
+        setState({ show: true, email: data.email });
       }
-      
-      console.log('🔐 LoginForm - Mostrando error:', errorMessage);
-      setLoginError(errorMessage);
-      toast.error(errorMessage);
+      setLoginError(error.message);
+      toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -192,6 +174,13 @@ export function LoginForm() {
         </svg>
         Continuar con Google
       </Button>
+      
+      <EmailVerificationDialog
+        isOpen={show}
+        onClose={() => setState((prev) => ({ ...prev, show: false }))}
+        email={email}
+      />
+
     </div>
   );
 }

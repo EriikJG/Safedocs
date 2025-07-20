@@ -10,6 +10,7 @@ export interface AuthUser {
   role?: string
   created_at: string
   updated_at: string
+  email_confirmed?: boolean
 }
 
 /**
@@ -99,6 +100,7 @@ export interface AuthResponse {
   user?: AuthUser | null
   session?: AuthSession | null  // Para compatibilidad, pero estará vacío
   error?: string
+  message?: string
   requiresEmailConfirmation?: boolean
 }
 
@@ -133,6 +135,17 @@ class CookieAuthService implements IAuthService {
         console.log('🔐 AuthService - Usuario extraído:', user);
         
         if (user) {
+          // Verificar si el email está confirmado
+          if (!user.email_confirmed) {
+            console.log('🔐 AuthService - Email no verificado');
+            return {
+              user,
+              session: null,
+              requiresEmailConfirmation: true,
+              error: 'Por favor verifica tu email antes de iniciar sesión'
+            };
+          }
+
           // 🍪 Solo guardar datos del usuario (tokens van en cookies HttpOnly)
           CookieSecureTokenManager.setUserSession(user);
           
@@ -216,19 +229,19 @@ class CookieAuthService implements IAuthService {
         const { user } = response.data;
         
         if (user) {
-          // 🍪 Guardar datos del usuario (tokens van en cookies)
-          CookieSecureTokenManager.setUserSession(user);
-          
+          // En el registro, no guardamos la sesión automáticamente
+          // El usuario debe verificar su email primero
           return { 
-            user, 
-            session: {} as AuthSession  // Sesión vacía por compatibilidad
+            user,
+            session: null,
+            requiresEmailConfirmation: true,
+            message: 'Registro exitoso. Por favor verifica tu email.'
           }
         } else {
-          // Usuario registrado pero necesita confirmar email
           return { 
-            user, 
-            session: null, 
-            requiresEmailConfirmation: true 
+            user: null,
+            session: null,
+            error: 'Error en el registro'
           }
         }
       }

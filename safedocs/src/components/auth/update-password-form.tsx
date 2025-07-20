@@ -195,3 +195,15 @@
 //     </div>
 //   );
 // }
+
+// Componente temporal para que el build funcione
+export default function UpdatePasswordForm() {
+  return (
+    <div className="flex w-full flex-col items-center justify-center gap-y-6">
+      <h2 className="text-xl md:text-2xl font-semibold">Funcionalidad en Desarrollo</h2>
+      <p className="text-sm text-muted-foreground text-center">
+        La funcionalidad de actualización de contraseña está siendo migrada a un sistema más seguro.
+      </p>
+    </div>
+  );
+}

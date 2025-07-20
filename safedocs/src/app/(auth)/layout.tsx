@@ -1,9 +1,12 @@
-import { ProtectedAuth } from "@/components/ProtectedAuth"
+import { EmailVerificationProvider } from '@/contexts/EmailVerificationContext';
+import { ProtectedAuth } from '@/components/ProtectedAuth';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedAuth>
-      {children}
-    </ProtectedAuth>
-  )
+    <EmailVerificationProvider>
+      <ProtectedAuth>
+        {children}
+      </ProtectedAuth>
+    </EmailVerificationProvider>
+  );
 }
