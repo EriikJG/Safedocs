@@ -27,13 +27,15 @@ jobs:
 
       - name: 🔍 Analizar con SonarCloud
         uses: SonarSource/sonarqube-scan-action@v3
+        working-directory: ./safedocs
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: 'https://sonarcloud.io'
         with:
           args: >
-           -Dsonar.organization=eriikjg
+            -Dsonar.organization=eriikjg
             -Dsonar.projectKey=EriikJG_Safedocs
             -Dsonar.projectName=Safedocs
             -Dsonar.sources=src
             -Dsonar.verbose=true
+
