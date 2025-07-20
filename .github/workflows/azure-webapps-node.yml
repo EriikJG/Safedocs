@@ -35,6 +35,6 @@ jobs:
             -Dsonar.organization=eriikjg
             -Dsonar.projectKey=EriikJG_Safedocs
             -Dsonar.projectName=Safedocs
-            -Dsonar.sources=safedocs
+            -Dsonar.sources=src
             -Dsonar.projectBaseDir=safedocs
             -Dsonar.verbose=true
