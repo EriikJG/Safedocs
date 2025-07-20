@@ -1,0 +1,89 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  username     String         @unique
+  password     String
+  name         String?
+  avatar       String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  documents    Document[]
+  sharedLinks  SharedLink[]
+  chatMessages ChatMessage[]
+
+  @@map("users")
+}
+
+model Document {
+  id            String        @id @default(cuid())
+  filename      String
+  originalName  String
+  mimeType      String
+  size          Int
+  encryptedPath String
+  encryptionKey String
+  checksum      String
+  description   String?
+  isPublic      Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sharedLinks SharedLink[]
+  tags        DocumentTag[]
+
+  @@map("documents")
+}
+
+model DocumentTag {
+  id         String   @id @default(cuid())
+  name       String
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("document_tags")
+}
+
+model SharedLink {
+  id            String   @id @default(cuid())
+  token         String   @unique
+  password      String?
+  expiresAt     DateTime?
+  maxViews      Int?
+  currentViews  Int      @default(0)
+  isActive      Boolean  @default(true)
+  allowDownload Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("shared_links")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  isSystem  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("chat_messages")
+}
