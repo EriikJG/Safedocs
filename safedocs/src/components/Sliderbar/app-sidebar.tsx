@@ -44,16 +44,16 @@ const navMain = [
     url: "/history",
     icon: BookOpen,
   },
-  {
-    title: "Compartir Documentos",
-    url: "/share",
-    icon: Link2,
-  },
-  {
-    title: "Verificar Documentos",
-    url: "/verify",
-    icon: CheckSquare,
-  },
+  // {
+  //   title: "Compartir Documentos",
+  //   url: "/share",
+  //   icon: Link2,
+  // },
+  // {
+  //   title: "Verificar Documentos",
+  //   url: "/verify",
+  //   icon: CheckSquare,
+  // },
 ];
 
 // Pestaña de admin solo para usuarios administradores
