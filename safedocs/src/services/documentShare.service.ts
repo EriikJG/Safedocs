@@ -8,7 +8,7 @@ import { apiClient } from '@/lib/api-client';
 export interface CreateSimpleShare {
   documentId: string;
   sharedWithUserId: string;
-  permissionLevel: 'read' | 'write' | 'admin';
+  permissionLevel: 'read' | 'comment';
   expiresInHours: number;
   shareTitle?: string;
   shareMessage?: string;
@@ -45,7 +45,7 @@ export interface DocumentShare {
   share_token: string;
   title?: string;
   message?: string;
-  permission_level: 'read' | 'write' | 'admin';
+  permission_level: 'read' | 'comment';
   expires_at?: string;
   is_active: boolean;
   created_at: string;
@@ -69,7 +69,7 @@ export interface SharedDocument {
     id: string;
     title?: string;
     message?: string;
-    permission_level: 'read' | 'write' | 'admin';
+    permission_level: 'read' | 'comment';
     created_at: string;
     expires_at?: string;
   };
@@ -95,7 +95,7 @@ export interface SharedWithMe {
   title: string;
   description?: string;
   doc_type: string;
-  permission_level: 'read' | 'write' | 'admin';
+  permission_level: 'read' | 'comment';
   shared_by: string;
   expires_at?: string;
   is_expired: boolean;

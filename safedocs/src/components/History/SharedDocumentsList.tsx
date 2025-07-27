@@ -132,10 +132,8 @@ export function SharedDocumentsList({ className }: SharedDocumentsListProps) {
     switch (level) {
       case 'read':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'write':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'admin':
-        return 'bg-red-100 text-red-800 border-red-200';
+      case 'comment':
+        return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -148,10 +146,8 @@ export function SharedDocumentsList({ className }: SharedDocumentsListProps) {
     switch (level) {
       case 'read':
         return 'Solo lectura';
-      case 'write':
-        return 'Lectura y edición';
-      case 'admin':
-        return 'Administrador';
+      case 'comment':
+        return 'Descargar';
       default:
         return level;
     }
@@ -269,8 +265,8 @@ export function SharedDocumentsList({ className }: SharedDocumentsListProps) {
               {loadingDocumentToken === share.share_token ? 'Cargando...' : 'Vista previa'}
             </Button>
             
-            {/* Mostrar botón de descarga solo si tiene permisos de write o admin */}
-            {(share.permission_level === 'write' || share.permission_level === 'admin') && (
+            {/* Mostrar botón de descarga solo si tiene permiso 'comment' */}
+            {share.permission_level === 'comment' && (
               <Button
                 onClick={() => handleDownloadDocument(share.share_token)}
                 disabled={share.is_expired}

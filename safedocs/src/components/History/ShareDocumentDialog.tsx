@@ -339,7 +339,7 @@ export function ShareDocumentDialog({
         <Label htmlFor="permissions">Nivel de permisos</Label>
         <Select
           value={formData.permissionLevel}
-          onValueChange={(value: "read" | "write" | "admin") => 
+          onValueChange={(value: "read" | "comment") => 
             updateFormField("permissionLevel", value)
           }
         >
@@ -353,16 +353,10 @@ export function ShareDocumentDialog({
                 Solo lectura
               </div>
             </SelectItem>
-            <SelectItem value="write">
+            <SelectItem value="comment">
               <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-yellow-500" />
-                Lectura y edición
-              </div>
-            </SelectItem>
-            <SelectItem value="admin">
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-red-500" />
-                Administrador
+                <Shield className="h-4 w-4 text-green-500" />
+                Descargar
               </div>
             </SelectItem>
           </SelectContent>
