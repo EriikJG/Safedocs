@@ -18,6 +18,7 @@ import {
 import { documentShareService, SharedDocument } from "@/services/documentShare.service";
 import { toast } from "sonner";
 import Loading from "@/components/ui/Loading";
+import { ProtectedPDFViewer } from "@/components/History/ProtectedPDFViewer";
 
 export default function SharedDocumentPage() {
   const params = useParams();
@@ -27,6 +28,7 @@ export default function SharedDocumentPage() {
   const [sharedDoc, setSharedDoc] = useState<SharedDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     if (shareToken) {
@@ -51,8 +53,19 @@ export default function SharedDocumentPage() {
 
   const handleViewDocument = () => {
     if (sharedDoc?.document.signed_file_url) {
-      window.open(sharedDoc.document.signed_file_url, '_blank');
-      toast.success("Documento abierto en nueva ventana");
+      const isPDF = sharedDoc.document.doc_type?.toLowerCase() === 'pdf' || 
+                    sharedDoc.document.signed_file_url.toLowerCase().includes('.pdf') ||
+                    sharedDoc.document.title.toLowerCase().includes('.pdf');
+      
+      if (isPDF) {
+        // Para PDFs, mostrar la previsualización protegida
+        setShowPreview(true);
+        toast.success("Mostrando previsualización protegida del documento");
+      } else {
+        // Para otros documentos, abrir en nueva ventana
+        window.open(sharedDoc.document.signed_file_url, '_blank');
+        toast.success("Documento abierto en nueva ventana");
+      }
     } else {
       toast.error("No se pudo obtener la URL del documento");
     }
@@ -298,6 +311,35 @@ export default function SharedDocumentPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Protected PDF Preview */}
+          {showPreview && sharedDoc && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Vista Previa del Documento</CardTitle>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowPreview(false)}
+                  >
+                    Ocultar Previsualización
+                  </Button>
+                </div>
+                <CardDescription>
+                  Previsualización protegida - La impresión está deshabilitada
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[800px] w-full">
+                  <ProtectedPDFViewer 
+                    pdfUrl={sharedDoc.document.signed_file_url}
+                    className="w-full h-full"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

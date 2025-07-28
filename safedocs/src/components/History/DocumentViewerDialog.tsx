@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, FileText, Download, AlertCircle, X, ExternalLink } from 'lucide-react';
-import { CustomPDFViewer } from './CustomPDFViewer';
+import { ProtectedPDFViewer } from './ProtectedPDFViewer';
 
 interface DocumentViewerDialogProps {
   open: boolean;
@@ -231,10 +231,12 @@ export function DocumentViewerDialog({
           {!isLoading && displayUrl && !iframeError && (
             <div className="relative h-full w-full bg-gray-100 rounded-lg overflow-hidden" style={{ minHeight: 'calc(98vh - 200px)' }}>
               {isPDF ? (
-                /* Visor PDF personalizado */
-                <CustomPDFViewer 
+                /* Visor PDF protegido */
+                <ProtectedPDFViewer 
                   pdfUrl={displayUrl} 
                   className="w-full h-full"
+                  onLoadSuccess={() => setIsDocumentLoading(false)}
+                  onLoadError={() => setIframeError(true)}
                 />
               ) : (
                 /* Método para otros documentos */
