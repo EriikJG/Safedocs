@@ -68,7 +68,7 @@ export function useDocumentShareOperations() {
     documentId: string,
     sharedWithUserId: string,
     options: {
-      permissionLevel?: 'read' | 'write' | 'admin';
+      permissionLevel?: 'read' | 'comment';
       expiresInHours?: number;
       shareTitle?: string;
       shareMessage?: string;
@@ -78,10 +78,13 @@ export function useDocumentShareOperations() {
       throw new Error('Document ID and user ID are required');
     }
 
+
+    // Solo permitir 'read' o 'comment', si no, usar 'read'
+    const validPermission = options.permissionLevel === 'comment' ? 'comment' : 'read';
     const shareData: CreateSimpleShare = {
       documentId,
       sharedWithUserId,
-      permissionLevel: options.permissionLevel || 'read',
+      permissionLevel: validPermission,
       expiresInHours: options.expiresInHours || 24,
       shareTitle: options.shareTitle,
       shareMessage: options.shareMessage,
@@ -124,8 +127,7 @@ export function useDocumentShareOperations() {
         inactiveMyShared: safeMySharedDocuments.filter(doc => !doc.is_active).length,
         permissionBreakdown: {
           read: safeMySharedDocuments.filter(doc => doc.permission_level === 'read').length,
-          write: safeMySharedDocuments.filter(doc => doc.permission_level === 'write').length,
-          admin: safeMySharedDocuments.filter(doc => doc.permission_level === 'admin').length,
+          comment: safeMySharedDocuments.filter(doc => doc.permission_level === 'comment').length,
         }
       };
 
@@ -141,8 +143,7 @@ export function useDocumentShareOperations() {
         inactiveMyShared: 0,
         permissionBreakdown: {
           read: 0,
-          write: 0,
-          admin: 0,
+          comment: 0,
         }
       };
     }

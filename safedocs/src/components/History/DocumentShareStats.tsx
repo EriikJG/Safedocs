@@ -12,7 +12,8 @@ import {
   CheckCircle,
   Eye,
   Edit,
-  Settings
+  Settings,
+  Download
 } from "lucide-react";
 import { useDocumentShareOperations } from "@/contexts/DocumentShareContext";
 
@@ -151,25 +152,14 @@ export function DocumentShareStats({ className }: DocumentShareStatsProps) {
                 </Badge>
               </div>
             )}
-            {stats.permissionBreakdown.write > 0 && (
+            {stats.permissionBreakdown.comment && stats.permissionBreakdown.comment > 0 && (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Edit className="h-3 w-3 text-yellow-500" />
-                  <span className="text-xs">Edición</span>
+                  <Download className="h-3 w-3 text-green-500" />
+                  <span className="text-xs">Descargar</span>
                 </div>
                 <Badge variant="secondary" className="text-xs">
-                  {stats.permissionBreakdown.write}
-                </Badge>
-              </div>
-            )}
-            {stats.permissionBreakdown.admin > 0 && (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Settings className="h-3 w-3 text-red-500" />
-                  <span className="text-xs">Admin</span>
-                </div>
-                <Badge variant="secondary" className="text-xs">
-                  {stats.permissionBreakdown.admin}
+                  {stats.permissionBreakdown.comment}
                 </Badge>
               </div>
             )}
